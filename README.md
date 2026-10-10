@@ -115,6 +115,12 @@ python -m uvicorn lastlight.app:app --reload --port 8765
 
 Open [http://127.0.0.1:8765](http://127.0.0.1:8765).
 
+For the optional TabPFN backend locally, install its separate ML dependency:
+
+```bash
+python -m pip install -r requirements-ml.txt
+```
+
 The first TabPFN fit may download model weights and take a little longer on CPU. The interface remains available while the engine loads. Check `/api/health` for the current backend and backtest metrics.
 
 ## Optional Gemma copy
@@ -166,8 +172,9 @@ entrypoint = "lastlight.app:app"
 Import the repository into Vercel and deploy. The Python function is exported from `api.index:app`.
 
 Vercel uses the lightweight Ridge backend because TabPFN's PyTorch dependencies exceed
-Vercel's 500 MB serverless function limit. The full TabPFN backend remains enabled for
-local and Render deployments through [`requirements.txt`](requirements.txt).
+Vercel's 500 MB serverless function limit. TabPFN is isolated in
+[`requirements-ml.txt`](requirements-ml.txt), which Vercel does not install. The full
+TabPFN backend remains enabled for local and Render deployments.
 
 ### Render
 

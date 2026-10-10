@@ -1,0 +1,3 @@
+# Optional local/Render enhancement. Keep this out of requirements.txt because
+# TabPFN pulls PyTorch and exceeds Vercel's 500 MB function limit.
+tabpfn>=2.0
