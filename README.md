@@ -163,7 +163,11 @@ This repository includes [`pyproject.toml`](pyproject.toml) with the FastAPI ent
 entrypoint = "lastlight.app:app"
 ```
 
-Import the repository into Vercel and deploy. The Python function is exported from `lastlight.app:app`.
+Import the repository into Vercel and deploy. The Python function is exported from `api.index:app`.
+
+Vercel uses the lightweight Ridge backend because TabPFN's PyTorch dependencies exceed
+Vercel's 500 MB serverless function limit. The full TabPFN backend remains enabled for
+local and Render deployments through [`requirements.txt`](requirements.txt).
 
 ### Render
 
