@@ -16,4 +16,4 @@ dependencies = [
 ]
 
 [tool.vercel]
-entrypoint = "lastlight.app:app"
+entrypoint = "api.index:app"

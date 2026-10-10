@@ -1,3 +1,5 @@
-from lastlight.app import app
+"""Vercel entrypoint for the Last Light FastAPI application."""
 
-__all__ = ["app"]
+from lastlight.app import app as app
+
+__all__ = ("app",)
