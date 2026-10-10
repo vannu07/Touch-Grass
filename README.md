@@ -1,77 +1,236 @@
 # Last Light
 
-A twenty-minute walk for the last light of the day.
+<p align="center">
+  <img src="docs/last-light-preview.svg" alt="Animated Last Light dusk walk ticket preview" width="100%">
+</p>
 
-You tell it where the door is and what the sky looks like. It answers with a ticket: **leave by 17:42, walk west, four things to do with your eyes and hands, phone in a pocket that is not your hand.** Then the screen goes dark on purpose.
+<p align="center">
+  <strong>The screen is the shortest part.</strong><br>
+  A local-first dusk walk ticket that gets you outside, then gets out of the way.
+</p>
 
-This is a submission for [Hacktoberfest Open-Source AI Challenge: Week 1 — Touch Grass](https://dev.to/challenges/hacktoberfest-week1-2026-10-05).
+<p align="center">
+  <a href="https://github.com/vannu07/Touch-Grass/actions"><img src="https://img.shields.io/github/actions/workflow/status/vannu07/Touch-Grass/ci.yml?style=flat-square&label=build" alt="Build status"></a>
+  <a href="https://github.com/vannu07/Touch-Grass"><img src="https://img.shields.io/github/license/vannu07/Touch-Grass?style=flat-square" alt="MIT License"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11 or newer"></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/API-FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"></a>
+  <a href="https://dev.to/challenges/hacktoberfest-week1-2026-10-05"><img src="https://img.shields.io/badge/Touch%20Grass-f06c3e?style=flat-square" alt=" Touch Grass"></a>
+</p>
 
-## Why this, and not another bird app
+> **Last Light** turns sunset geometry, local climate signals, and open-weight AI into a small printed-style brief: when to leave, which way to walk, four sensory prompts, and one rule — put the phone away.
 
-The trail this week is already full of offline bird identifiers and frost-date garden planners. Those are good ideas. They also keep you looking at a phone.
 
-Last Light is the other direction. The model work happens **before you leave**. The artefact is a stub you can print. Pocket mode is a countdown and a heading. There is no chat. There is no species list. If you cannot name the bird, that is the point.
 
-## What it does
+## Why it exists
 
-1. Computes **sunset, golden hour, and the sun's azimuth** from latitude and longitude. No weather API, no map tiles.
-2. Scores whether tonight is worth going with **TabPFN** (Prior Labs), trained on 1,400 synthetic dusk-walk rows whose hidden recipe is temperature, rain, wind, minutes-to-sunset, and foliage season. A ridge regression sits next to it as a check. The page shows both MAEs.
-3. Writes the ticket copy with **Gemma** when Ollama, Groq, or Google's Gemma endpoint is available. If none of those are up, the **field recipes** write the ticket themselves. They are not a broken fallback. They are the offline voice of the product.
-4. Optionally reads the ticket aloud (ElevenLabs if a key is present, otherwise the browser's own voice) so the phone can go away.
+Most outdoor apps increase screen time. Last Light is deliberately the opposite:
 
-Location is used once, to issue the ticket. Field notes stay in `localStorage`.
+- **Prepare on screen.** Calculate the useful facts before leaving.
+- **Carry a ticket.** Print it, read it aloud, or remember the four cues.
+- **Pocket the phone.** Pocket Mode becomes a simple countdown.
+- **Notice the ordinary.** There is no feed, streak, destination, or species database.
 
-## Run it
+The best interface is the one you stop looking at.
 
-Python 3.11+ (3.12 is what the Dockerfile uses).
+## What the experience feels like
+
+1. Choose a city or use your door.
+2. Set the walk length, date, temperature, ground, and sky.
+3. Receive a dusk ticket with a leave-by time, sunset, heading, score, route, and field cues.
+4. Print the stub or start Pocket Mode.
+5. Walk. Write a private three-line note when you return.
+
+### The ticket includes
+
+| Signal | What it gives you |
+| --- | --- |
+| Solar geometry | Sunrise, sunset, golden hour, civil dusk, day length, and sunset azimuth |
+| Walk score | TabPFN prediction with a Ridge baseline and held-out MAE |
+| Field route | A destination-free route toward the sunset heading |
+| Four cues | Look, listen, touch, and notice prompts |
+| Pocket Mode | A full-screen timer designed to be left alone |
+| Private notes | Stored locally in your browser; never sent to the API |
+
+## Open AI, used on purpose
+
+The open components are not decoration. They make the product practical:
+
+- **TabPFN** scores whether the conditions are worth a walk from a generated dusk dataset.
+- **Gemma** writes the ticket when Ollama or another compatible endpoint is available.
+- **Local field recipes** keep the experience useful without a model, API key, or internet connection.
+- **FastAPI and vanilla web technologies** keep the system inspectable and easy to run on a laptop.
+
+The model works before the walk. The walk itself is intentionally low-tech.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    B[Browser] -->|city or coordinates + conditions| API[FastAPI]
+    API --> SUN[Solar geometry]
+    API --> CLIMATE[Local climate recipe]
+    CLIMATE --> TAB[TabPFN]
+    TAB --> SCORE[Walk score + Ridge comparison]
+    API --> COPY{Open Gemma endpoint?}
+    COPY -->|yes| GEMMA[Gemma copy]
+    COPY -->|no| RECIPES[Offline field recipes]
+    SCORE --> TICKET[Walk ticket]
+    GEMMA --> TICKET
+    RECIPES --> TICKET
+    TICKET --> B
+    B -->|localStorage only| NOTES[Private field notes]
+```
+
+## Run locally
+
+### Requirements
+
+- Python 3.11 or newer
+- 2 GB+ RAM recommended for the optional TabPFN model
+- Ollama is optional
 
 ```bash
+git clone https://github.com/vannu07/Touch-Grass.git
+cd Touch-Grass
+python -m venv .venv
+```
+
+Windows:
+
+```powershell
+.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-python -m pytest
+python -m pytest -q
+python -m uvicorn lastlight.app:app --reload --port 8765
+```
+
+macOS/Linux:
+
+```bash
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pytest -q
 python -m uvicorn lastlight.app:app --reload --port 8765
 ```
 
 Open [http://127.0.0.1:8765](http://127.0.0.1:8765).
 
-The first TabPFN fit downloads weights and can take a minute on CPU. `/api/health` reports `engine: loading` until that finishes. Tickets still issue; they wait on the fit.
+The first TabPFN fit may download model weights and take a little longer on CPU. The interface remains available while the engine loads. Check `/api/health` for the current backend and backtest metrics.
 
-### Optional Gemma
+## Optional Gemma copy
+
+Run Gemma locally with Ollama:
 
 ```bash
 ollama pull gemma3:4b
-# then, in .env or the shell:
-set OLLAMA_MODEL=gemma3:4b
 ```
 
-Without Ollama, copy still works. The ticket footer will say `field recipes · offline`.
+Then set the model name:
 
-### Optional voice
+Windows PowerShell:
 
-Set `ELEVENLABS_API_KEY`. If it is missing, **Read it aloud** uses the browser.
+```powershell
+$env:OLLAMA_MODEL = "gemma3:4b"
+```
 
-## Tests that do not need a model
+macOS/Linux:
+
+```bash
+export OLLAMA_MODEL=gemma3:4b
+```
+
+If no endpoint is available, Last Light uses its deterministic offline field recipes. This is an intentional product mode, not an error state.
+
+## Optional voice
+
+Set `ELEVENLABS_API_KEY` to enable server-side narration. Without it, the browser's built-in speech synthesis is used.
+
+```env
+ELEVENLABS_API_KEY=your_key_here
+ELEVENLABS_VOICE_ID=JBFqnCBsd6RMkjVDRZzb
+```
+
+Never commit `.env`; it is ignored by Git.
+
+## Deploy
+
+### Vercel
+
+This repository includes [`pyproject.toml`](pyproject.toml) with the FastAPI entrypoint required by Vercel:
+
+```toml
+[tool.vercel]
+entrypoint = "lastlight.app:app"
+```
+
+Import the repository into Vercel and deploy. The Python function is exported from `lastlight.app:app`.
+
+### Render
+
+The repository includes [`render.yaml`](render.yaml) as a Blueprint:
+
+```bash
+uvicorn lastlight.app:app --host 0.0.0.0 --port $PORT
+```
+
+### Docker
+
+```bash
+docker build -t last-light .
+docker run --rm -p 8765:8765 last-light
+```
+
+## Project map
+
+```text
+lastlight/
+  app.py       FastAPI routes, validation, ticket orchestration
+  climate.py   Generated climate table and walk features
+  copy.py      Gemma adapters and offline field recipes
+  places.py    Small city catalogue
+  predict.py   TabPFN engine and Ridge baseline
+  sun.py       Solar position and sunset calculations
+web/
+  index.html   Accessible ticket interface
+  app.js       Ticket flow, Pocket Mode, voice, local notes
+  styles.css   Editorial dusk visual system and print styles
+tests/
+  test_sun.py
+  test_climate.py
+docs/
+  last-light-preview.svg  Animated README visual
+```
+
+## Privacy and safety
+
+- Location is used to issue a ticket and is not persisted by the server.
+- Field notes use browser `localStorage`.
+- No maps, tracking pixels, or weather API are required.
+- The score is an experiment, not a guarantee about safety or weather.
+- Do not walk somewhere unsafe, trespass, or continue after it is dark.
+
+## Validation
 
 ```bash
 python -m pytest -q
 ```
 
-Sun times for Delhi in October, dataset shape, and the hidden rainfall penalty. The TabPFN backtest runs when the server starts and is printed in the log:
+The tests cover solar calculations, generated dataset shape, and the climate recipe's rainfall penalty. The server logs the model backtest:
 
+```text
+[lastlight] go-engine tabpfn tabpfn_mae=... ridge_mae=... mean_mae=... n_test=...
 ```
-[lastlight] go-engine tabpfn  tabpfn_mae=… ridge_mae=… mean_mae=… n_test=…
-```
 
-## Deploy
+## Hacktoberfest challenge fit
 
-`render.yaml` is a Blueprint for a Python web service. `Dockerfile` is the same app on 3.12-slim. You do not need a GPU.
+| Criterion | How Last Light answers it |
+| --- | --- |
+| Touch Grass | The screen prepares the walk and Pocket Mode gets out of the way |
+| Open-source AI | TabPFN and Gemma are first-class, swappable components |
+| Creativity | A destination-free, printable dusk ticket instead of another feed |
+| Technical execution | Solar geometry, ML backtest, graceful offline mode, voice, print CSS |
+| Privacy | Local notes and no required weather or map service |
 
-## What this is not
+## License
 
-- Not a chatbot.
-- Not a trail map.
-- Not medical or safety advice. If it is actually dark and the street is not yours to walk, do not go.
-- The climate table is generated from a physical recipe so TabPFN can be scored against a known process. It is not NOAA station data.
-
-## Licence
-
-MIT. See `LICENSE`.
+MIT. See [LICENSE](LICENSE).

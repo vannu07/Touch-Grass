@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Last Light animated dusk walk ticket</title>
+  <desc id="desc">A sunset moves across a dark sky while a walk ticket appears.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#17253a"/>
+      <stop offset="0.58" stop-color="#814b3b"/>
+      <stop offset="1" stop-color="#edb269"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff5df"/>
+      <stop offset="1" stop-color="#ead6b6"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#090806" flood-opacity=".45"/>
+    </filter>
+    <style>
+      .sun { animation: dip 7s ease-in-out infinite alternate; transform-origin: 600px 480px; }
+      .glow { animation: breathe 4s ease-in-out infinite; transform-origin: 600px 480px; }
+      .ticket { animation: arrive 7s ease-in-out infinite; transform-origin: 600px 350px; }
+      @keyframes dip { from { transform: translateY(-92px); } to { transform: translateY(24px); } }
+      @keyframes breathe { from { opacity: .28; transform: scale(.94); } to { opacity: .58; transform: scale(1.08); } }
+      @keyframes arrive { 0%, 12% { opacity: 0; transform: translateY(20px) rotate(-1deg); } 24%, 78% { opacity: 1; transform: translateY(0) rotate(0); } 92%, 100% { opacity: 0; transform: translateY(-12px) rotate(1deg); } }
+      text { font-family: "IBM Plex Sans", Arial, sans-serif; }
+      .mono { font-family: "IBM Plex Mono", Consolas, monospace; }
+      .serif { font-family: Georgia, serif; }
+    </style>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <circle class="glow" cx="600" cy="480" r="150" fill="#ffc979"/>
+  <circle class="sun" cx="600" cy="480" r="64" fill="#ffe5a9"/>
+  <path d="M0 525 Q180 475 360 525 T720 525 T1080 505 T1200 520 V675 H0Z" fill="#171713"/>
+  <path d="M0 580 Q240 545 430 585 T820 575 T1200 560 V675 H0Z" fill="#0d0d0d"/>
+  <g class="ticket" filter="url(#shadow)">
+    <rect x="725" y="82" width="355" height="475" rx="3" fill="url(#card)"/>
+    <rect x="725" y="82" width="355" height="72" fill="#1b1511"/>
+    <text x="752" y="112" fill="#f6ecd8" font-size="12" letter-spacing="3" class="mono">MUNICIPAL DUSK AUTHORITY</text>
+    <text x="752" y="139" fill="#f6ecd8" font-size="25" class="serif">No. 7A4C19</text>
+    <text x="752" y="190" fill="#b65327" font-size="12" letter-spacing="2" class="mono">SATURDAY 10 OCTOBER</text>
+    <text x="752" y="230" fill="#1b1511" font-size="32" class="serif">Walk into the sun</text>
+    <text x="752" y="265" fill="#30251e" font-size="15">Leave by 17:42. Walk west.</text>
+    <path d="M752 292 H1048" stroke="#c9b79a" stroke-dasharray="5 5"/>
+    <text x="752" y="325" fill="#7a6a58" font-size="11" letter-spacing="2" class="mono">FIELD CUES</text>
+    <text x="752" y="355" fill="#30251e" font-size="14">01  Look until the sky has a colour.</text>
+    <text x="752" y="383" fill="#30251e" font-size="14">02  Listen under the traffic.</text>
+    <text x="752" y="411" fill="#30251e" font-size="14">03  Touch the first living thing.</text>
+    <text x="752" y="439" fill="#30251e" font-size="14">04  Notice what you usually miss.</text>
+    <path d="M752 462 H1048" stroke="#1b1511" stroke-width="2"/>
+    <text x="752" y="495" fill="#30251e" font-size="14" font-style="italic">Phone in a pocket that is not your hand.</text>
+    <text x="752" y="532" fill="#7a6a58" font-size="11" class="mono">TABPFN SCORE 86  /  POCKET MODE READY</text>
+  </g>
+  <text x="68" y="92" fill="#fff2d8" font-size="18" letter-spacing="5" class="mono">LAST LIGHT</text>
+  <text x="68" y="145" fill="#fff2d8" font-size="54" class="serif">The screen is</text>
+  <text x="68" y="205" fill="#fff2d8" font-size="54" class="serif">the shortest part.</text>
+  <text x="70" y="252" fill="#f6d5a2" font-size="17">A local-first dusk walk ticket for getting outside.</text>
+  <text x="70" y="610" fill="#f6d5a2" font-size="13" letter-spacing="2" class="mono">OPEN AI  /  PRIVATE BY DEFAULT  /  TOUCH GRASS</text>
+</svg>
