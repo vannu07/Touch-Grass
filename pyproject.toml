@@ -1,2 +1,8 @@
+[project]
+name = "last-light"
+version = "1.0.0"
+description = "A local-first dusk walk ticket for getting outside."
+requires-python = ">=3.11"
+
 [tool.vercel]
 entrypoint = "lastlight.app:app"
